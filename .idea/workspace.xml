@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="1de18f14-5adb-4072-9e4f-54158c6689ff" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Lab1.java" beforeDir="false" afterPath="$PROJECT_DIR$/Lab1.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/func6outputText.txt" beforeDir="false" afterPath="$PROJECT_DIR$/func6outputText.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph.dot" beforeDir="false" afterPath="$PROJECT_DIR$/graph.dot" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph.dot.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +44,7 @@
     "Application.test.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "Merging B1",
     "kotlin-language-version-configured": "true",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",

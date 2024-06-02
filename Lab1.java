@@ -375,3 +375,4 @@ public class Lab1 {
         return ret.trim();
     }
 }
+// some test for git

@@ -59,28 +59,7 @@ public class Lab1 {
                         String word1 = scanner.nextLine();
                         System.out.println("Please input the second word:");
                         String word2 = scanner.nextLine();
-                        if (!(graphElements.containsKey(word1))
-                                && !(graphElements.containsKey(word2))) {
-                            //System.out.println("No \"" + word1 + "\" and \""
-                            //        + word2 + "\" in the graph!");
-                            System.out.printf("No \"%s\" and \"%s\" in the graph!\n", word1, word2);
-                        } else if (!(graphElements.containsKey(word1))) {
-                            //System.out.println("No \"" + word1 + "\" in the graph!\n");
-                            System.out.printf("No \"%s\" in the graph!\n", word1);
-                        } else if (!(graphElements.containsKey(word2))) {
-                            //System.out.println("No \"" + word2 + "\" in the graph!");
-                            System.out.printf("No \"%s\" in the graph!\n", word2);
-                        } else {
-                            List<String> list = queryBridgeWords(word1, word2);
-                            if (list.isEmpty()) {
-                                //System.out.println("No bridge words from " + "\"" + word1 + "\"" + " to "
-                                //        + "\"" + word2 + "\"" + "!");
-                                System.out.printf("No bridge words from \"%s\" to \"%s\"!", word1, word2);
-                            } else {
-                                System.out.printf("The bridge word list from \"%s\" to \"%s\" is: %s%n",
-                                        word1, word2, list);
-                            }
-                        }
+                        System.out.println(queryBridgeWords(word1, word2));
                         break;
                     case 2: //根据输入文本生成新文本
                         System.out.println("Please enter text:");
@@ -181,7 +160,7 @@ public class Lab1 {
                     .add(graphElements.get(strlist[i + 1]));
             // System.out.print("<" + graphElements.get(strlist[i]) + "," + graphElements.get(strlist[i + 1]) + ">" + "\t");
         }
-        System.out.println(Arrays.toString(strlist));
+        //System.out.println(Arrays.toString(strlist));
         // Iterator<Map.Entry<Integer, List<Integer>>> iterator = outDegreeGraph.entrySet().iterator();
         // while (iterator.hasNext()) {
         //     Map.Entry<Integer, List<Integer>> entry = iterator.next();
@@ -317,7 +296,7 @@ public class Lab1 {
      * @param word2 桥接词2
      * @return List<String> word1和word2之间的所有可作为桥接词的单词
      */
-    public static List<String> queryBridgeWords(final String word1, final String word2) {
+    public static List<String> query(final String word1, final String word2) {
         List<String> list = new ArrayList<>();
         if (!(graphElements.containsKey(word1) && graphElements.containsKey(word2))) {
             return list;
@@ -335,6 +314,43 @@ public class Lab1 {
     }
 
     /**
+     * 判定word1和word2是否存在，再查询桥接词.
+     *
+     * @param word1 桥接词1
+     * @param word2 桥接词2
+     * @return String 最终结果
+     */
+    public static String queryBridgeWords(final String word1, final String word2) {
+        String result;
+        if (!(graphElements.containsKey(word1))
+                && !(graphElements.containsKey(word2))) {
+            //System.out.println("No \"" + word1 + "\" and \""
+            //        + word2 + "\" in the graph!");
+            result = "No \"" + word1 + "\" and \"" + word2 + "\" in the graph!";
+            //System.out.printf("No \"%s\" and \"%s\" in the graph!\n", word1, word2);
+        } else if (!(graphElements.containsKey(word1))) {
+            //System.out.println("No \"" + word1 + "\" in the graph!\n");
+            result = "No \"" + word1 + "\" in the graph!";
+            //System.out.printf("No \"%s\" in the graph!\n", word1);
+        } else if (!(graphElements.containsKey(word2))) {
+            //System.out.println("No \"" + word2 + "\" in the graph!");
+            result = "No \"" + word2 + "\" in the graph!";
+            //System.out.printf("No \"%s\" in the graph!\n", word2);
+        } else {
+            List<String> list = query(word1, word2);
+            if (list.isEmpty()) {
+                //System.out.println("No bridge words from " + "\"" + word1 + "\"" + " to " + "\"" + word2 + "\"" + "!");
+                result = "No bridge words from \"" + word1 + "\" to \"" + word2 + "\"!";
+                //System.out.printf("No bridge words from \"%s\" to \"%s\"!", word1, word2);
+            } else {
+                result = "The bridge word list from \"" + word1 + "\" to \"" + word2 + "\" is: " + list;
+                //System.out.printf("The bridge word list from \"%s\" to \"%s\" is: %s%n", word1, word2, list);
+            }
+        }
+        return result;
+    }
+
+    /**
      * 根据bridge word生成新文本,扩充句子.
      *
      * @param inputText a sentence to expand using BridgeWords
@@ -346,7 +362,7 @@ public class Lab1 {
         for (int i = 0; i < textList.length - 1; i++) {
             retStr += textList[i] + " ";
             //求出单词的出度词序列，随机选择一个插入原文本
-            List<String> bridgeStr = queryBridgeWords(textList[i].toLowerCase(), textList[i + 1].toLowerCase());
+            List<String> bridgeStr = query(textList[i].toLowerCase(), textList[i + 1].toLowerCase());
             if (!bridgeStr.isEmpty()) {
                 int randomInt = new Random().nextInt(bridgeStr.size());
                 retStr += bridgeStr.get(randomInt) + " ";

@@ -1,34 +1,54 @@
 import java.io.BufferedWriter;
-// import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.lang.String;
 
 
-
+/**
+ * main class Lab1.
+ */
 public class Lab1 {
-    static final int INT_MAX = Integer.MAX_VALUE; //int最大整数
-    static Map<String, Integer> graphElements = new HashMap<String, Integer>(); //单词->数组下标映射
-    static Map<Integer, String> graphElements2 = new HashMap<Integer, String>(); //数组下标->单词映射
-    static Map<Integer, List<Integer>> outDegreeGraph = new HashMap<Integer, List<Integer>>(); //出度图
-    static int[][] outDegreeMatrix; //出度矩阵
+    private static final int INT_MAX = Integer.MAX_VALUE;
+    private static final Map<String, Integer> graphElements =
+            new HashMap<>();
+    private static final Map<Integer, String> graphElements2 =
+            new HashMap<>(); //数组下标->单词映射
+    private static final Map<Integer, List<Integer>> outDegreeGraph =
+            new HashMap<>(); //出度图
+    private static int[][] outDegreeMatrix; //出度矩阵
 
-    public static void main(String[] args) {
+    /**
+     * main function.
+     */
+    public static void main(final String[] args) {
         try {
             String[] wordList = getTextFromFile("test.txt"); //从文件读入数据,得到单词数组
             // System.out.println(1);
             // System.out.println(Arrays.toString(wordList));
-            Initializes(wordList); //从文件路径读入数据并进行处理，生成出度矩阵、出度图和哈希表
+            initializes(wordList); //从文件路径读入数据并进行处理，生成出度矩阵、出度图和哈希表
             // System.out.println(graphElements);
-
             Scanner scanner = new Scanner(System.in);
-            while (true){
-                System.out.println("\nPlease select function:");
-                System.out.println("1.Search bridge words\n2.Generate new text\n3.Calculate the shortest path\n4.Random walk\n" +
-                        "5.Show graph\n0.Exit");
+            while (true) {
+                System.out.println("\n--------------------------------------------");
+                System.out.println("Please select function:");
+                //StringBuilder sb = new StringBuilder();
+                //sb.append("1.Search bridge words\n")
+                //        .append("2.Generate new text\n")
+                //        .append("3.Calculate the shortest path\n")
+                //        .append("4.Random walk\n")
+                //        .append("5.Show graph\n")
+                //        .append("0.Exit");
+                //String result = sb.toString();
+                String result = """
+                    1.Search bridge words
+                    2.Generate new text
+                    3.Calculate the shortest path
+                    4.Random walk
+                    5.Show graph
+                    0.Exit""";
+                System.out.println(result);
                 int chioce = scanner.nextInt();
                 scanner.nextLine(); //读入缓冲区的换行符
                 switch (chioce) {
@@ -37,44 +57,56 @@ public class Lab1 {
                         String word1 = scanner.nextLine();
                         System.out.println("Please input the second word:");
                         String word2 = scanner.nextLine();
-                        if (!(graphElements.containsKey(word1)) &&!(graphElements.containsKey(word2))){
-                            System.out.println("No \"" + word1 + "\" and \"" + word2 + "\" in the graph!");
-                        }else if (!(graphElements.containsKey(word1))) {
-                            System.out.println("No \"" + word1 + "\" in the graph!");
-                        }else if (!(graphElements.containsKey(word2))) {
-                            System.out.println("No \"" + word2 + "\" in the graph!");
-                        }else {
+                        if (!(graphElements.containsKey(word1))
+                                && !(graphElements.containsKey(word2))) {
+                            //System.out.println("No \"" + word1 + "\" and \""
+                            //        + word2 + "\" in the graph!");
+                            System.out.printf("No \"%s\" and \"%s\" in the graph!\n", word1, word2);
+                        } else if (!(graphElements.containsKey(word1))) {
+                            //System.out.println("No \"" + word1 + "\" in the graph!\n");
+                            System.out.printf("No \"%s\" in the graph!\n", word1);
+                        } else if (!(graphElements.containsKey(word2))) {
+                            //System.out.println("No \"" + word2 + "\" in the graph!");
+                            System.out.printf("No \"%s\" in the graph!\n", word2);
+                        } else {
                             List<String> list = queryBridgeWords(word1, word2);
                             if (list.isEmpty()) {
-                                System.out.println("No bridge words from " + "\"" + word1 + "\"" + " to " + "\"" + word2 + "\"" + "!");
+                                //System.out.println("No bridge words from " + "\"" + word1 + "\"" + " to "
+                                //        + "\"" + word2 + "\"" + "!");
+                                System.out.printf("No bridge words from \"%s\" to \"%s\"!", word1, word2);
                             } else {
-                                System.out.println("The bridge word list from " + "\"" + word1 + "\"" + " to " + "\"" + word2 + "\"" + " is: " + list);
+                                System.out.printf("The bridge word list from \"%s\" to \"%s\" is: %s%n",
+                                        word1, word2, list);
                             }
                         }
                         break;
                     case 2: //根据输入文本生成新文本
                         System.out.println("Please enter text:");
                         String outputText = generateNewText(scanner.nextLine());
-                        System.out.println("The new text is: " + "\n" + outputText);
+                        //System.out.println("The new text is: " + "\n" + outputText);
+                        System.out.printf("The new text is:\n%s", outputText);
                         break;
                     case 3: //计算最短路径
                         System.out.println("Please input the first word:");
-                        String word1_3 = scanner.nextLine();
-                        System.out.println("Please input the second word:  if null then calculate shortest path " +
-                                "from " + "\"" + word1_3 + "\"" + " to all other words");
-                        String word2_3 = scanner.nextLine();
-                        if(word2_3.isEmpty()){
-                            if (!graphElements.containsKey(word1_3)) {
+                        String nextLineString = scanner.nextLine();
+                        //System.out.println("Please input the second word:  if null then calculate shortest path "
+                        //        + "from " + "\"" + nextLineString + "\"" + " to all other words");
+                        System.out.printf("""
+                            Please input the second word: if null then calculate shortest path
+                            from "%s" to all other words""", nextLineString);
+                        String nextLineString2 = scanner.nextLine();
+                        if (nextLineString2.isEmpty()) {
+                            if (!graphElements.containsKey(nextLineString)) {
                                 System.out.println("The word isn't in the Graph!");
-                            }else{
-                                for(int i = 0; i < graphElements.size(); i++){
-                                    if(!graphElements2.get(i).equals(word1_3) ){
-                                        System.out.println(calcShortestPath(word1_3, graphElements2.get(i)));
+                            } else {
+                                for (int i = 0; i < graphElements.size(); i++) {
+                                    if (!graphElements2.get(i).equals(nextLineString)) {
+                                        System.out.println(calcShortestPath(nextLineString, graphElements2.get(i)));
                                     }
                                 }
                             }
-                        }else{
-                            System.out.println(calcShortestPath(word1_3, word2_3));
+                        } else {
+                            System.out.println(calcShortestPath(nextLineString, nextLineString2));
                         }
                         // System.out.println(calcShortestPath(word1_3, word2_3));
                         break;
@@ -98,7 +130,7 @@ public class Lab1 {
                     default:
                         System.out.println("Input error!");
                 }
-                if (chioce == 0){
+                if (chioce == 0) {
                     break;
                 }
             }
@@ -109,73 +141,82 @@ public class Lab1 {
         }
     }
 
-    //    生成出度矩阵、出度图及两个映射
-    public static void Initializes(String[] strlist) {
+    /**
+     * 生成出度矩阵、出度图及两个映射.
+     *
+     * @param strlist all words in an array
+     */
+    public static void initializes(final String[] strlist) {
+        //for (int i = 0; i < strlist.length; i++) { //生成单词和数组下标的互相映射和出度图
+        //    if (!graphElements.containsKey(strlist[i])) {
+        //        // System.out.print(strlist[i] + "\t");
+        //        graphElements.put(strlist[i], count);
+        //        graphElements2.put(count, strlist[i]);
+        //        outDegreeGraph.put(count++, new ArrayList<Integer>());
+        //    }
+        //}
         int count = 0;
-        for (int i = 0; i < strlist.length; i++ ) { //生成单词和数组下标的互相映射和出度图
-            if (!graphElements.containsKey(strlist[i])) {
-                // System.out.print(strlist[i] + "\t");
-                graphElements.put(strlist[i], count);
-                graphElements2.put(count, strlist[i]);
-                outDegreeGraph.put(count++, new ArrayList<Integer>());
+        Iterator<String> iterator = Arrays.asList(strlist).iterator();
+        while (iterator.hasNext()) {
+            String word = iterator.next();
+            if (!graphElements.containsKey(word)) {
+                // 将单词和计数器count放入 graphElements 中
+                graphElements.put(word, count);
+                // 将计数器count和单词放入 graphElements2 中
+                graphElements2.put(count, word);
+                // 创建出度图的列表，并与计数器count相关联
+                outDegreeGraph.put(count, new ArrayList<Integer>());
+                // 递增计数器
+                count++;
             }
         }
         System.out.println();
         outDegreeMatrix = new int[count][count];
         for (int i = 0; i < strlist.length - 1; i++) { //遍历文本生成出度矩阵
-            outDegreeMatrix[graphElements.get(strlist[i])][graphElements.get(strlist[i + 1])]++;
-            outDegreeGraph.get(graphElements.get(strlist[i])).add(graphElements.get(strlist[i + 1]));
-           // System.out.print("<" + graphElements.get(strlist[i]) + "," + graphElements.get(strlist[i + 1]) + ">" + "\t");
+            outDegreeMatrix[graphElements.get(strlist[i])]
+                    [graphElements.get(strlist[i + 1])]++;
+            outDegreeGraph.get(graphElements.get(strlist[i]))
+                    .add(graphElements.get(strlist[i + 1]));
+            // System.out.print("<" + graphElements.get(strlist[i]) + "," + graphElements.get(strlist[i + 1]) + ">" + "\t");
         }
         System.out.println(Arrays.toString(strlist));
-       // Iterator<Map.Entry<Integer, List<Integer>>> iterator = outDegreeGraph.entrySet().iterator();
-       // while (iterator.hasNext()) {
-       //     Map.Entry<Integer, List<Integer>> entry = iterator.next();
-       //     System.out.println("key:" + entry.getKey() + ",vaule:" + entry.getValue());
-       // }
-       // System.out.println();
-       // for (int i = 0; i < count; i++) {
-       //     System.out.println(Arrays.toString(outDegreeMatrix[i]));
-       // }
+        // Iterator<Map.Entry<Integer, List<Integer>>> iterator = outDegreeGraph.entrySet().iterator();
+        // while (iterator.hasNext()) {
+        //     Map.Entry<Integer, List<Integer>> entry = iterator.next();
+        //     System.out.println("key:" + entry.getKey() + ",vaule:" + entry.getValue());
+        // }
+        // System.out.println();
+        // for (int i = 0; i < count; i++) {
+        //     System.out.println(Arrays.toString(outDegreeMatrix[i]));
+        // }
     }
 
-    //    从文件读入并处理文本
-    public static String[] getTextFromFile(String fileName) throws IOException {
+    /**
+     * 从文件读入并处理文本.
+     *
+     * @param fileName name of input file
+     * @return String[] 无大写，符号的单词数组
+     */
+    public static String[] getTextFromFile(final String fileName) throws IOException {
         List<String> list = Files.readAllLines(Paths.get(fileName));
         String templist = "";
-        for (int i = 0; i < list.size(); i++) {
-            templist += " " + list.get(i);
-        }
+        templist = String.join(" ", list);
         templist = templist.trim();
         templist = templist.toLowerCase();
         // System.out.println(templist);
-        if(templist.charAt(0) < 'a' || templist.charAt(0) > 'z'){
+        if (templist.charAt(0) < 'a' || templist.charAt(0) > 'z') {
             templist = templist.substring(1);
         }
         return templist.split("[^a-z]+");
     }
 
-    // public static String generateDotFile(Set<String> words) {
-    //     StringBuilder dotFileContent = new StringBuilder();
-    //     dotFileContent.append("digraph G {\n"); // 定义一个有向图
-    //     // Add nodes
-    //     for (String word : words) {
-    //         dotFileContent.append("    ").append(word).append(";\n");
-    //     }
-    //     // Add edges
-    //     for (String word : words) {
-    //         for (String otherWord : words) {
-    //             if (!word.equals(otherWord)) {
-    //                 dotFileContent.append("    ").append(word).append(" -> ").append(otherWord).append(";\n");
-    //             }
-    //         }
-    //     }
-    //     dotFileContent.append("}\n");
-    //     return dotFileContent.toString();
-    // }
-    // 生成有向图png部分
-    // 计算单词对的出现次数
-    private static Map<String, Map<String, Integer>> countWordPairs(String sentence) {
+    /**
+     * 生成有向图png部分-计算单词对的出现次数.
+     *
+     * @param sentence 处理后的句子，只有小写单词和空格
+     * @return wordPairs
+     */
+    private static Map<String, Map<String, Integer>> countWordPairs(final String sentence) {
         Map<String, Map<String, Integer>> wordPairs = new HashMap<>();
         String[] words = sentence.split("\\s+"); // 使用正则表达式分割字符串
         for (int i = 0; i < words.length - 1; i++) {
@@ -185,8 +226,14 @@ public class Lab1 {
         }
         return wordPairs;
     }
-    // 生成DOT文件内容
-    private static String generateDotFile(Map<String, Map<String, Integer>> wordPairs) {
+
+    /**
+     * 生成有向图png部分-生成DOT文件内容.
+     *
+     * @param wordPairs 单词对及出现次数
+     * @return String
+     */
+    private static String generateDotFile(final Map<String, Map<String, Integer>> wordPairs) {
         StringBuilder dotFileContent = new StringBuilder();
         dotFileContent.append("digraph G {\n");
         // Add nodes
@@ -204,16 +251,30 @@ public class Lab1 {
         dotFileContent.append("}\n");
         return dotFileContent.toString();
     }
-    // 生成DOT文件
-    private static void writeToFile(String content, String fileName) {
+
+    /**
+     * 生成有向图png部分-生成DOT文件.
+     *
+     * @param content DOT文件内容
+     * @param fileName 生成DOT文件的名字
+     * @return
+     */
+    private static void writeToFile(final String content, final String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             writer.write(content);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     // 根据DOT文件生成PNG图片
-    private static void generateGraph(String dotFileName) {
+    /**
+     * 生成有向图png部分-根据DOT文件生成PNG图片.
+     *
+     * @param dotFileName DOT文件名
+     * @return None
+     */
+    private static void generateGraph(final String dotFileName) {
         try {
             ProcessBuilder pb = new ProcessBuilder("dot", "-Tpng", dotFileName, "-o", dotFileName + ".png");
             Process process = pb.start();
@@ -223,8 +284,13 @@ public class Lab1 {
         }
     }
 
-    //    展示有向图
-    public static void displayGraph(String[] strlist) {
+    /**
+     * 生成有向图png部分-展示有向图.
+     *
+     * @param strlist 单词数组
+     * @return None
+     */
+    public static void displayGraph(final String[] strlist) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < strlist.length; i++) {
             sb.append(strlist[i]);
@@ -242,13 +308,18 @@ public class Lab1 {
         System.out.println("The graph is saved in " + dotFileName + ".png");
     }
 
-    //    查询桥接词
-    public static List<String> queryBridgeWords(String word1, String word2) {
+    /**
+     * 查询桥接词.
+     *
+     * @param word1 桥接词1
+     * @param word2 桥接词2
+     * @return List<String> word1和word2之间的所有可作为桥接词的单词
+     */
+    public static List<String> queryBridgeWords(final String word1, final String word2) {
         List<String> list = new ArrayList<>();
         if (!(graphElements.containsKey(word1) && graphElements.containsKey(word2))) {
             return list;
         }
-
         int pre = graphElements.get(word1);
         int sub = graphElements.get(word2);
         for (int i = 0; i < outDegreeMatrix.length; i++) {
@@ -261,8 +332,13 @@ public class Lab1 {
         return list;
     }
 
-    // 根据bridge word生成新文本
-    public static String generateNewText(String inputText) throws IOException {
+    /**
+     * 根据bridge word生成新文本,扩充句子.
+     *
+     * @param inputText a sentence to expand using BridgeWords
+     * @return String 用桥接词扩充后的句子
+     */
+    public static String generateNewText(final String inputText) throws IOException {
         String[] textList = inputText.split("[^a-zA-Z]+");
         String retStr = "";
         for (int i = 0; i < textList.length - 1; i++) {
@@ -280,9 +356,15 @@ public class Lab1 {
     }
 
     // Dijkstra算法
-    public static int[][] dijkstra(int index) {
+    /**
+     * Dijkstra算法.
+     *
+     * @param index word id
+     * @return int[][] 一个词到其他所有词的最短路径
+     */
+    public static int[][] dijkstra(final int index) {
         //经典的算法，本质是贪心
-        Map<Integer, String> S_Gather = new HashMap<>();
+        Map<Integer, String> gather = new HashMap<>();
         int n = graphElements.size();
         int[] path = new int[n];
         int[] pathLen = new int[n];
@@ -296,17 +378,17 @@ public class Lab1 {
         }
         // System.out.println("path: " + Arrays.toString(path));
         // System.out.println("pathlen: " + Arrays.toString(pathLen));
-        S_Gather.put(index, null);
+        gather.put(index, null);
         for (int i = 1; i < n; i++) {
             int minIndex = index;
             for (int j = 0; j < n; j++) { //选出未被选择过的路径最短的点
-                if ((!S_Gather.containsKey(j)) && pathLen[j] < pathLen[minIndex]) {
+                if ((!gather.containsKey(j)) && pathLen[j] < pathLen[minIndex]) {
                     minIndex = j;
                 }
             }
-            S_Gather.put(minIndex, null);
+            gather.put(minIndex, null);
             for (int j = 0; j < n; j++) { //更新其余未被选择点的最短路径
-                if (!S_Gather.containsKey(j)) {
+                if (!gather.containsKey(j)) {
                     if (outDegreeMatrix[minIndex][j] != 0) {
                         if (pathLen[minIndex] + outDegreeMatrix[minIndex][j] < pathLen[j]) {
                             pathLen[j] = pathLen[minIndex] + outDegreeMatrix[minIndex][j];
@@ -320,12 +402,18 @@ public class Lab1 {
         return new int[][]{path, pathLen};
     }
 
-    // 计算两个单词之间的最短路径
-    public static String calcShortestPath(String word1, String word2) {
+    /**
+     * 计算两个单词之间的最短路径.
+     *
+     * @param word1 第一个词
+     * @param word2 第二个词
+     * @return String 最短路径 "a->b->c"
+     */
+    public static String calcShortestPath(final String word1, final String word2) {
         if (!graphElements.containsKey(word1)) {
             return new String("The \"" + word1 + "\" isn't in the Graph!");
         }
-        if (!graphElements.containsKey(word2)&&!word2.isEmpty()) {
+        if (!graphElements.containsKey(word2) && !word2.isEmpty()) {
             return new String("The \"" + word2 + "\" isn't in the Graph!");
         }
         int m = graphElements.get(word1);
@@ -350,7 +438,11 @@ public class Lab1 {
         return ret;
     }
 
-    // 随机游走
+    /**
+     * 随机游走.
+     *
+     * @return String 随机游走序列 "a b c d"
+     */
     public static String randomWalk() throws InterruptedException {
         Map<String, String> passedPath = new HashMap<>(); //维护哈希表记录游走过的边
         String ret = "";
@@ -375,7 +467,3 @@ public class Lab1 {
         return ret.trim();
     }
 }
-// some test for git
-// git add again
-// git change again
-// git B2

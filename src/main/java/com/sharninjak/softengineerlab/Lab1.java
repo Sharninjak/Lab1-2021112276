@@ -1,3 +1,5 @@
+package com.sharninjak.softengineerlab;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class Lab1 {
      */
     public static void main(final String[] args) {
         try {
-            String[] wordList = getTextFromFile("test.txt"); //从文件读入数据,得到单词数组
+            String[] wordList = getTextFromFile("src/main/java/com/sharninjak/softengineerlab/test.txt"); //从文件读入数据,得到单词数组
             // System.out.println(1);
             // System.out.println(Arrays.toString(wordList));
             initializes(wordList); //从文件路径读入数据并进行处理，生成出度矩阵、出度图和哈希表
@@ -113,7 +115,7 @@ public class Lab1 {
                     case 4: //随机游走，并将生成的文本生成txt文件
                         System.out.println("Text generation...");
                         String randText = randomWalk();
-                        String outputFilePath = "func6outputText.txt";
+                        String outputFilePath = "src/main/java/com/sharninjak/softengineerlab/func6outputText.txt";
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath))) {
                             writer.write(randText);
                             System.out.println("Write file successfully!");
@@ -302,7 +304,7 @@ public class Lab1 {
         // System.out.println(joinedString);
         Map<String, Map<String, Integer>> wordPairs = countWordPairs(joinedString); // 计算单词对的出现次数
         String dotFileContent = generateDotFile(wordPairs); // 生成DOT文件内容
-        String dotFileName = "graph.dot"; // DOT文件名
+        String dotFileName = "src/main/java/com/sharninjak/softengineerlab/graph.dot"; // DOT文件名
         writeToFile(dotFileContent, dotFileName); // 生成DOT文件
         generateGraph(dotFileName); // 生成PNG图片
         System.out.println("The graph is saved in " + dotFileName + ".png");

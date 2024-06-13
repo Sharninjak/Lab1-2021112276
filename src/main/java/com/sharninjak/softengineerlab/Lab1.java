@@ -82,6 +82,8 @@ public class Lab1 {
                     case 4: //随机游走，并将生成的文本生成txt文件
                         System.out.println("Text generation...");
                         String randText = randomWalk();
+                        System.out.printf("Final Random Walk Result: %s", randText);
+                        System.out.println();
                         String outputFilePath = "src/main/java/com/sharninjak/softengineerlab/func6outputText.txt";
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath))) {
                             writer.write(randText);
@@ -436,7 +438,7 @@ public class Lab1 {
             tmp = path[0][tmp];
         }
         ret = graphElements2.get(indexword1) + ret;
-        ret += "\n===" + "Shortest Path Length is " + path[1][indexword2] + "!===";
+        ret += "\n===" + "Shortest Path Length is " + path[1][indexword2] + "!===\n";
         return ret;
     }
 
@@ -466,7 +468,9 @@ public class Lab1 {
             if (word2.isEmpty()) {
                 for (int i = 0; i < graphElements.size(); i++) {
                     String wordi = graphElements2.get(i);
-                    result = calc(word1, wordi);
+                    if (!wordi.equals(word1)) {
+                        result = result + calc(word1, wordi);
+                    }
                 }
             } else {
                 // word2不为空,计算word1到word2的最短路径
@@ -482,26 +486,26 @@ public class Lab1 {
      * @return String 随机游走序列 "a b c d"
      */
     public static String randomWalk() throws InterruptedException {
-        Map<String, String> passedPath = new HashMap<>(); //维护哈希表记录游走过的边
-        String ret = "";
-        Random rand = new Random();
-        int index = rand.nextInt(graphElements.size());
+        Map<String, String> passedPath = new HashMap<>(); // 维护哈希表记录游走过的边
+        String ret = ""; // 存储游走过程中访问的节点序列
+        Random rand = new Random(); // 用于生成随机数
+        int index = rand.nextInt(graphElements.size()); // 生成一个随机索引，作为游走的起始节点
         ret += graphElements2.get(index) + " ";
         System.out.print(graphElements2.get(index) + " ");
-        while (!outDegreeGraph.get(index).isEmpty()) { //单词出度为0时结束游走
+        while (!outDegreeGraph.get(index).isEmpty()) { // 对新选择的单词出度为0时结束游走
             Thread.sleep(200);
-            //从出度表中随机选择下一个单词
+            // 从出度表中随机选择下一个单词
             int nextIndex = outDegreeGraph.get(index).get(rand.nextInt(outDegreeGraph.get(index).size()));
             String tmp = "" + index + nextIndex;
             ret += graphElements2.get(nextIndex) + " ";
             System.out.print(graphElements2.get(nextIndex) + " ");
-            if (passedPath.containsKey(tmp)) { // 路径重复时结束游走
+            if (passedPath.containsKey(tmp)) { // 出现第一条重复的边,结束游走
                 break;
             }
-            passedPath.put(tmp, null); //将该边加入哈希表
+            passedPath.put(tmp, null); // 将该边加入哈希表
             index = nextIndex;
         }
-        System.out.println();
+        System.out.println("\n===Random Walk End===");
         return ret.trim();
     }
 }

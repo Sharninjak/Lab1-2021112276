@@ -35,4 +35,8 @@ class Lab1Test {
             e.printStackTrace();
         }
     }
+
+    void randomWalkTesk() {
+
+    }
 }

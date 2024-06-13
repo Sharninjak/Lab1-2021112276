@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 
-import static com.sharninjak.softengineerlab.Lab1.getTextFromFile;
-import static com.sharninjak.softengineerlab.Lab1.initializes;
-import static com.sharninjak.softengineerlab.Lab1.queryBridgeWords;
+import static com.sharninjak.softengineerlab.Lab1.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class Lab1Test {
@@ -36,7 +34,22 @@ class Lab1Test {
         }
     }
 
-    void randomWalkTesk() {
-
+    @Test
+    void randomWalkTest() {
+        try {
+            String[][] wordList =
+                    {
+                            {"of"},
+                            {"dance", "of", "the", "haha", "asdfasd"},
+                            {"of", "and", "of", "here", "of", "yellow"},
+                    };
+            int test_index = 1;
+            initializes(wordList[test_index]);
+            String result = randomWalk();
+            System.out.println(result);
+            assertTrue(true);
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 }

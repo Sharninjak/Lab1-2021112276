@@ -1,5 +1,8 @@
 package com.sharninjak.softengineerlab;
 
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -307,6 +310,12 @@ public class Lab1 {
      * @param word1 词1,在图中尚不知是否存在
      * @param word2 词2,在图中尚不知是否存在
      * @return String 最终结果
+     * no word1 and word2, Output: No "word1" and "word2" in the graph!
+     * only no word1, Output: No "word1" in the graph!
+     * only no word2, Output: No "word2" in the graph!
+     * both in the graph
+     *      exist bridge words, Output: The bridge word list from "word1" and "word2" is: [RESULT1, RESULT2, ...]
+     *      no bridge words, Output: No bridge words from "word1" and "word2"!
      */
     public static String queryBridgeWords(final String word1, final String word2) {
         String result;

@@ -51,9 +51,9 @@ public class Lab1 {
                     5.Show graph
                     0.Exit""";
                 System.out.println(result);
-                int chioce = scanner.nextInt();
+                int choice = scanner.nextInt();
                 scanner.nextLine(); //读入缓冲区的换行符
-                switch (chioce) {
+                switch (choice) {
                     case 1: //查询桥接词
                         System.out.println("Please input the first word:");
                         String word1 = scanner.nextLine();
@@ -74,21 +74,9 @@ public class Lab1 {
                         //        + "from " + "\"" + nextLineString + "\"" + " to all other words");
                         System.out.printf("""
                             Please input the second word: if null then calculate shortest path
-                            from "%s" to all other words""", nextLineString);
+                            from "%s" to all other words \n""", nextLineString);
                         String nextLineString2 = scanner.nextLine();
-                        if (nextLineString2.isEmpty()) {
-                            if (!graphElements.containsKey(nextLineString)) {
-                                System.out.println("The word isn't in the Graph!");
-                            } else {
-                                for (int i = 0; i < graphElements.size(); i++) {
-                                    if (!graphElements2.get(i).equals(nextLineString)) {
-                                        System.out.println(calcShortestPath(nextLineString, graphElements2.get(i)));
-                                    }
-                                }
-                            }
-                        } else {
-                            System.out.println(calcShortestPath(nextLineString, nextLineString2));
-                        }
+                        System.out.println(calcShortestPath(nextLineString, nextLineString2));
                         // System.out.println(calcShortestPath(word1_3, word2_3));
                         break;
                     case 4: //随机游走，并将生成的文本生成txt文件
@@ -111,7 +99,7 @@ public class Lab1 {
                     default:
                         System.out.println("Input error!");
                 }
-                if (chioce == 0) {
+                if (choice == 0) {
                     break;
                 }
             }
@@ -248,7 +236,6 @@ public class Lab1 {
         }
     }
 
-    // 根据DOT文件生成PNG图片
     /**
      * 生成有向图png部分-根据DOT文件生成PNG图片.
      *
@@ -269,7 +256,6 @@ public class Lab1 {
      * 生成有向图png部分-展示有向图.
      *
      * @param strlist 单词数组
-     * @return None
      */
     public static void displayGraph(final String[] strlist) {
         StringBuilder sb = new StringBuilder();
@@ -292,8 +278,8 @@ public class Lab1 {
     /**
      * 查询桥接词.
      *
-     * @param word1 桥接词1
-     * @param word2 桥接词2
+     * @param word1 词1,在图中存在
+     * @param word2 词2,在图中存在
      * @return List<String> word1和word2之间的所有可作为桥接词的单词
      */
     public static List<String> query(final String word1, final String word2) {
@@ -316,8 +302,8 @@ public class Lab1 {
     /**
      * 判定word1和word2是否存在，再查询桥接词.
      *
-     * @param word1 桥接词1
-     * @param word2 桥接词2
+     * @param word1 词1,在图中尚不知是否存在
+     * @param word2 词2,在图中尚不知是否存在
      * @return String 最终结果
      */
     public static String queryBridgeWords(final String word1, final String word2) {
@@ -373,7 +359,6 @@ public class Lab1 {
         return retStr;
     }
 
-    // Dijkstra算法
     /**
      * Dijkstra算法.
      *
@@ -423,37 +408,72 @@ public class Lab1 {
     /**
      * 计算两个单词之间的最短路径.
      *
-     * @param word1 第一个词
-     * @param word2 第二个词
+     * @param word1 第一个词,在图中存在
+     * @param word2 第二个词,在图中存在
      * @return String 最短路径 "a->b->c"
      */
-    public static String calcShortestPath(final String word1, final String word2) {
+    public static String calc(final String word1, final String word2) {
         if (!graphElements.containsKey(word1)) {
             return new String("The \"" + word1 + "\" isn't in the Graph!");
         }
         if (!graphElements.containsKey(word2) && !word2.isEmpty()) {
             return new String("The \"" + word2 + "\" isn't in the Graph!");
         }
-        int m = graphElements.get(word1);
-        int n;
-        int[][] path = dijkstra(m);
+        int indexword1 = graphElements.get(word1);
+        int indexword2 = graphElements.get(word2);;
+        int[][] path = dijkstra(indexword1);
         // if (!graphElements.containsKey(word2)) {
         //     n = new Random().nextInt(graphElements.size());
         // } else {
-        n = graphElements.get(word2);
         // }
-        if (path[1][n] == INT_MAX) {
-            return new String("The \"" + word1 + "\" to \"" + graphElements2.get(n) + "\" is unreachable!");
+        if (path[1][indexword2] == INT_MAX) {
+            return new String("The \"" + word1 + "\" to \"" + graphElements2.get(indexword2) + "\" is unreachable!");
         }
-        String ret = "->" + graphElements2.get(n);
-        int tmp = path[0][n];
-        while (tmp != m) {
+        String ret = "->" + graphElements2.get(indexword2);
+        int tmp = path[0][indexword2];
+        while (tmp != indexword1) {
             ret = "->" + graphElements2.get(tmp) + ret;
             tmp = path[0][tmp];
         }
-        ret = graphElements2.get(m) + ret;
-        ret += " " + "The shortest path is " + path[1][n] + "!";
+        ret = graphElements2.get(indexword1) + ret;
+        ret += "\n===" + "Shortest Path Length is " + path[1][indexword2] + "!===";
         return ret;
+    }
+
+    /**
+     * 计算两个单词之间的最短路径.
+     *
+     * @param word1 第一个词,在图中尚不知是否存在
+     * @param word2 第二个词,在图中尚不知是否存在
+     * @return String 最短路径 "a->b->c"
+     */
+    public static String calcShortestPath(final String word1, final String word2) {
+        // 返回的结果,String
+        String result = "NO PROCESS";
+        // 图中没有word1且图中没有word2且word2不为空
+        if (!(graphElements.containsKey(word1))
+                && !(graphElements.containsKey(word2)) && !word2.isEmpty()) {
+            result = "No \"" + word1 + "\" and \"" + word2 + "\" in the graph!";
+        } else if (!(graphElements.containsKey(word1))) {
+            // 图中没有word1且(图中有word2或word2为空)
+            result = "No \"" + word1 + "\" in the graph!";
+        } else if (!(graphElements.containsKey(word2)) && !word2.isEmpty()) {
+            // 图中有word1且没有word2且word2不为空
+            result = "No \"" + word2 + "\" in the graph!";
+        } else {
+            // 图中有word1且(图中有word2或word2为空)
+            // word2为空,计算word1到所有词的最短路径
+            if (word2.isEmpty()) {
+                for (int i = 0; i < graphElements.size(); i++) {
+                    String wordi = graphElements2.get(i);
+                    result = calc(word1, wordi);
+                }
+            } else {
+                // word2不为空,计算word1到word2的最短路径
+                result = calc(word1, word2);
+            }
+        }
+        return result;
     }
 
     /**
